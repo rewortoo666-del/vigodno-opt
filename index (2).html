@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ВЫГОДНО ОПТОМ | Кроссовки В-23</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            cyan: '#00F5FF',
+                            neon: '#0EA5E9',
+                            emerald: '#10B981',
+                            crimson: '#FF2A54'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root { --bg-deep: #05030a; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: #F8FAFC;
+            -webkit-tap-highlight-color: transparent;
+            background-image:
+                radial-gradient(circle at 12% -10%, rgba(255, 45, 85, 0.22) 0%, transparent 38%),
+                radial-gradient(circle at 90% 8%, rgba(0, 245, 255, 0.16) 0%, transparent 36%),
+                radial-gradient(circle at 80% 100%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+        }
+        body::before {
+            content: '';
+            pointer-events: none;
+            position: fixed; inset: 0;
+            background: repeating-linear-gradient(180deg, transparent 0 2px, rgba(0,0,0,0.08) 2px 3px);
+            opacity: .25; z-index: 0;
+        }
+        #app-wrapper { position: relative; z-index: 1; }
+        .brand-grad {
+            background: linear-gradient(90deg, #fff 0%, #00F5FF 45%, #FF2A54 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .hud-glass {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(8, 10, 22, 0.96) 100%);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .hud-card {
+            background: linear-gradient(165deg, rgba(22, 18, 36, 0.92) 0%, rgba(8, 10, 20, 0.96) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 18px 40px -16px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06);
+            transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+        }
+        .hud-card:active { transform: scale(.98); }
+        .hud-glow-cyan { box-shadow: 0 0 28px -4px rgba(0, 245, 255, 0.45); }
+        .tech-border-cyan { border: 1px solid rgba(0, 245, 255, 0.32); }
+        .sneaker-card { overflow: hidden; position: relative; }
+        .sneaker-card::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.14) 48%, transparent 62%);
+            transform: translateX(-120%);
+            pointer-events: none;
+        }
+        .sneaker-card:hover::after { animation: sheen 1.1s ease; }
+        @keyframes sheen { to { transform: translateX(120%); } }
+        @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes pulseGlow {
+            0%,100% { box-shadow: 0 0 0 0 rgba(0,245,255,.35); }
+            50% { box-shadow: 0 0 18px 2px rgba(0,245,255,.25); }
+        }
+        .logo-ring { animation: pulseGlow 2.8s ease-in-out infinite; }
+        .price-neon { text-shadow: 0 0 16px rgba(0,245,255,.45); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #1e293b; border-radius: 9999px; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+            background: #00F5FF; border: 3px solid #030712; box-shadow: 0 0 14px #00F5FF; margin-top: -8px;
+        }
+        #cart-bar { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+        #checkout-sheet, #product-sheet {
+            padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+        }
+        #toast { top: auto; bottom: 46%; transform: translate(-50%, 50%); }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-in { animation: cardIn .45s cubic-bezier(.16,1,.3,1) both; }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+    </style>
+</head>
+<body class="flex justify-center min-h-screen antialiased pb-32 selection:bg-brand-cyan selection:text-black">
+
+    <div id="toast" class="fixed left-1/2 z-[90] hud-glass text-white text-xs font-bold px-5 py-3 rounded-2xl shadow-2xl border border-brand-cyan/40 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2.5">
+        <span id="toast-icon">⚡️</span>
+        <span id="toast-text" class="font-mono">Готово</span>
+    </div>
+
+    <div id="lightbox-modal" class="fixed inset-0 z-[80] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeLightbox()">
+        <button type="button" onclick="event.stopPropagation(); shiftModalPhoto(-1); document.getElementById('lightbox-img').src=document.getElementById('modal-main-img').src;" class="absolute left-4 w-11 h-11 rounded-2xl hud-glass text-white text-xl border border-white/20">‹</button>
+        <img id="lightbox-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl border border-white/10" onclick="event.stopPropagation(); shiftModalPhoto(1); document.getElementById('lightbox-img').src=document.getElementById('modal-main-img').src;">
+        <button type="button" onclick="event.stopPropagation(); shiftModalPhoto(1); document.getElementById('lightbox-img').src=document.getElementById('modal-main-img').src;" class="absolute right-4 w-11 h-11 rounded-2xl hud-glass text-white text-xl border border-white/20">›</button>
+        <button onclick="closeLightbox()" class="absolute top-5 right-5 w-11 h-11 rounded-2xl hud-glass text-white font-black text-lg flex items-center justify-center border border-white/20">✕</button>
+    </div>
+
+    <div id="app-wrapper" class="w-full max-w-md min-h-screen relative flex flex-col">
+
+        <header class="sticky top-0 z-30 hud-glass border-b border-white/10 px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="relative cursor-pointer active:scale-95 transition" onclick="switchChannel('catalog')">
+                    <div class="w-12 h-12 rounded-2xl overflow-hidden shadow-lg border-2 border-brand-cyan/70 logo-ring">
+                        <img src="https://i.postimg.cc/j27hZ6Dw/14.jpg" alt="ВЫГОДНО ОПТОМ" class="w-full h-full object-cover">
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-brand-emerald text-black rounded-full flex items-center justify-center border-2 border-black text-[9px] font-black">✓</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-black tracking-tight text-sm brand-grad">ВЫГОДНО ОПТОМ</span>
+                        <span id="header-brand-tag" class="px-2 py-0.5 rounded-md text-[9px] font-black font-mono tracking-wider bg-brand-cyan/15 text-brand-cyan uppercase border border-brand-cyan/30">SNEAKERS HUB</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400 mt-0.5 flex items-center gap-1.5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-emerald opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-emerald"></span>
+                        </span>
+                        LIVE • ТЯК • Павильон В-23
+                    </div>
+                </div>
+            </div>
+            <button onclick="redirectToManagerSupport()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-brand-cyan to-blue-600 text-black font-black text-[10px] shadow-lg active:scale-95 hud-glow-cyan">
+                Менеджер
+            </button>
+        </header>
+
+        <section class="px-4 pt-3.5">
+            <div class="hud-glass p-1.5 rounded-2xl flex gap-1 border border-white/10">
+                <button onclick="switchChannel('catalog')" id="btn-tab-catalog" class="flex-1 py-2.5 rounded-xl font-black text-[11px] flex flex-col items-center gap-0.5 bg-gradient-to-r from-brand-cyan to-blue-600 text-black hud-glow-cyan">
+                    <span>👟 Каталог</span>
+                    <span class="text-[8px] bg-black/30 text-white font-mono px-1.5 py-0.5 rounded">ВСЕ</span>
+                </button>
+                <button onclick="switchChannel('retail')" id="btn-tab-retail" class="flex-1 py-2.5 rounded-xl font-bold text-[11px] flex flex-col items-center gap-0.5 text-slate-400">
+                    <span>🛒 Розница</span>
+                    <span class="text-[8px] bg-emerald-500/20 text-emerald-400 font-mono px-1.5 py-0.5 rounded">1–3</span>
+                </button>
+                <button onclick="switchChannel('boxes')" id="btn-tab-boxes" class="flex-1 py-2.5 rounded-xl font-bold text-[11px] flex flex-col items-center gap-0.5 text-slate-400">
+                    <span>📦 Короба</span>
+                    <span class="text-[8px] bg-amber-500/20 text-amber-400 font-mono px-1.5 py-0.5 rounded">8 ПАР</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="px-4 pt-3">
+            <div id="channel-info-banner" class="hud-card rounded-3xl p-4 tech-border-cyan">
+                <div class="flex items-center justify-between">
+                    <span id="banner-badge" class="text-[9px] font-black uppercase tracking-widest bg-brand-cyan text-black px-2 py-0.5 rounded font-mono">КАТАЛОГ В-23</span>
+                    <span id="banner-subbadge" class="text-[10px] text-brand-emerald font-mono font-bold">от 4 пар — сборный опт</span>
+                </div>
+                <h2 id="banner-title" class="text-base font-black text-white leading-tight pt-1.5">Кроссовки оптом, ТЯК Москва</h2>
+                <p id="banner-desc" class="text-[11px] text-slate-400 leading-snug mt-1">1–3 пары — розница. От 4 пар любого микса — оптовая цена на всю корзину. Короб 8 пар (ростовка) — уточняйте у менеджера.</p>
+            </div>
+        </section>
+
+        <section class="p-4 pb-2 space-y-3">
+            <div class="relative">
+                <input type="text" id="search" placeholder="Поиск: Nike, Puma, размер..." oninput="filterProducts()"
+                    class="w-full hud-glass rounded-2xl pl-10 pr-3 py-2.5 text-xs text-white placeholder:text-slate-500 outline-none border border-white/10">
+                <svg class="w-4 h-4 text-brand-cyan absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+            </div>
+            <div id="subcategories-pills" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1"></div>
+        </section>
+
+        <main id="products-container" class="p-4 pt-2 grid grid-cols-2 gap-3"></main>
+    </div>
+
+    <div id="cart-bar" class="fixed left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-40 opacity-0 pointer-events-none translate-y-4 transition-all">
+        <button onclick="showCheckout()" class="w-full hud-card tech-border-cyan rounded-2xl px-4 py-3 flex items-center justify-between hud-glow-cyan">
+            <div class="text-left">
+                <p class="text-[10px] font-mono text-slate-400" id="cart-bar-meta">0 пар</p>
+                <p class="text-sm font-black text-white" id="cart-bar-total">0 ₽</p>
+            </div>
+            <span class="text-xs font-black bg-brand-cyan text-black px-3 py-2 rounded-xl">ОФОРМИТЬ</span>
+        </button>
+    </div>
+
+    <!-- Product sheet -->
+    <div id="product-form" class="fixed inset-0 z-50 bg-black/70 opacity-0 pointer-events-none transition" onclick="hideProduct()"></div>
+    <div class="fixed inset-x-0 bottom-0 z-50 flex justify-center pointer-events-none">
+        <div id="product-sheet" class="pointer-events-auto w-full max-w-md hud-glass bg-slate-950/95 rounded-t-[32px] p-5 pt-3 space-y-3 max-h-[92vh] overflow-y-auto translate-y-full transition-transform duration-300 border-t border-brand-cyan/40">
+            <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-1"></div>
+            <div class="relative">
+                <img id="modal-main-img" src="" class="w-full aspect-[4/3] object-cover rounded-2xl border border-white/10" onclick="openLightbox()">
+                <button type="button" onclick="shiftModalPhoto(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hud-glass text-white text-sm border border-white/20">‹</button>
+                <button type="button" onclick="shiftModalPhoto(1)" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg hud-glass text-white text-sm border border-white/20">›</button>
+                <span id="modal-badge" class="absolute top-3 left-3 bg-brand-cyan text-black font-black text-[9px] px-2 py-0.5 rounded-md font-mono">ОПТ</span>
+                <span id="modal-photo-count" class="absolute bottom-3 right-3 hud-glass text-[10px] font-mono text-white px-2 py-0.5 rounded-md border border-white/20">1/1</span>
+            </div>
+            <div id="modal-thumbs" class="flex gap-2 overflow-x-auto hide-scrollbar"></div>
+            <div>
+                <p id="modal-cat" class="text-[10px] font-mono text-slate-400"></p>
+                <h3 id="modal-title" class="text-base font-black text-white leading-tight"></h3>
+                <p id="modal-desc" class="text-[11px] text-slate-400 mt-1 leading-snug"></p>
+                <p id="modal-sizes" class="text-[11px] text-brand-cyan font-mono mt-1"></p>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-mono text-slate-400 mb-1.5">Качество</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" id="q-std" onclick="setQuality('std')" class="rounded-xl py-2.5 text-xs font-black border border-brand-cyan bg-brand-cyan text-black">Стандарт</button>
+                    <button type="button" id="q-lux" onclick="setQuality('lux')" class="rounded-xl py-2.5 text-xs font-black border border-white/10 text-slate-300">Премиум / Люкс</button>
+                </div>
+                <p id="quality-hint" class="text-[10px] font-mono text-slate-500 mt-1.5"></p>
+            </div>
+
+            <div id="mix-opt-banner" class="hidden rounded-xl px-3 py-2 bg-amber-400 text-black text-[11px] font-black">Сборный опт активен — цена на всю корзину оптовая</div>
+
+            <div class="hud-card rounded-2xl p-3">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[10px] font-mono text-slate-400" id="slider-title-label">Количество пар</p>
+                        <p class="text-2xl font-black font-mono text-brand-cyan" id="tier-qty">1</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-mono text-slate-400">Цена за пару</p>
+                        <p class="text-xl font-black font-mono text-white" id="tier-unit-price">0 ₽</p>
+                    </div>
+                </div>
+                <input id="qty-slider" type="range" min="1" max="16" value="1" oninput="onQtySlide(this.value)" class="mt-3">
+                <p class="text-[10px] font-mono text-slate-500 mt-1" id="tier-total-line">Итого: 0 ₽</p>
+            </div>
+
+            <button type="button" onclick="askBoxPrice()" class="w-full py-3 rounded-xl border border-amber-400/40 text-amber-300 font-black text-xs">
+                Короб 8 пар (ростовка) — УТОЧНИТЬ ЦЕНУ
+            </button>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="hideProduct()" class="py-3 rounded-xl hud-glass text-slate-300 font-bold text-xs">Закрыть</button>
+                <button type="button" onclick="addModalToCart()" class="py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-blue-600 text-black font-black text-xs hud-glow-cyan">В ЗАКАЗ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout -->
+    <div id="checkout-form" class="fixed inset-0 z-50 bg-black/70 opacity-0 pointer-events-none transition" onclick="hideCheckout()"></div>
+    <div class="fixed inset-x-0 bottom-0 z-50 flex justify-center pointer-events-none">
+        <div id="checkout-sheet" class="pointer-events-auto w-full max-w-md hud-glass bg-slate-950 rounded-t-[32px] p-5 pt-3 space-y-3 max-h-[92vh] overflow-y-auto translate-y-full transition-transform duration-300 border-t border-brand-cyan/30" onclick="event.stopPropagation()">
+            <div class="w-12 h-1.5 rounded-full bg-white/20 mx-auto mb-1"></div>
+            <h3 class="text-sm font-black text-white">Оформление заказа</h3>
+            <div id="checkout-cart-items" class="space-y-2 max-h-40 overflow-y-auto"></div>
+
+            <input id="company" placeholder="Имя / магазин *" class="w-full hud-glass rounded-xl px-3 py-2.5 text-xs text-white outline-none border border-white/10">
+            <input id="city" placeholder="Город / точка *" class="w-full hud-glass rounded-xl px-3 py-2.5 text-xs text-white outline-none border border-white/10">
+            <input id="contacts" placeholder="Telegram @username или телефон *" class="w-full hud-glass rounded-xl px-3 py-2.5 text-xs text-white outline-none border border-white/10">
+
+            <label class="text-[10px] font-mono text-slate-400">Доставка / ТК *</label>
+            <select id="tk-choice" class="w-full hud-glass rounded-xl px-3 py-2.5 text-xs text-white outline-none border border-white/10 bg-slate-950">
+                <option value="Самовывоз (Линия В, павильон 23)">Самовывоз (Линия В, павильон 23)</option>
+                <option value="Автобус со стоянки ТЯК Москва / Садовод">Автобус со стоянки ТЯК Москва / Садовод</option>
+                <option value="Карго (ТК ТЯК Москва)">Карго (ТК ТЯК Москва)</option>
+                <option value="СДЭК">СДЭК</option>
+                <option value="ПЭК / Деловые Линии">ПЭК / Деловые Линии</option>
+            </select>
+
+            <p class="text-[10px] font-mono text-slate-400">Оплата</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="pay-card" onclick="setPay('card')" class="rounded-xl py-3 text-[11px] font-black bg-brand-cyan text-black">Перевод на карту<br><span class="font-mono text-[9px] opacity-80">Сбер / Т-Банк</span></button>
+                <button type="button" id="pay-cash" onclick="setPay('cash')" class="rounded-xl py-3 text-[11px] font-black hud-glass text-slate-300">Наличные<br><span class="font-mono text-[9px] opacity-80">В-23 / автобус / карго</span></button>
+            </div>
+
+            <div class="hud-card rounded-xl p-3 flex justify-between items-center">
+                <span class="text-[11px] text-slate-400">Сумма заказа</span>
+                <span id="checkout-total" class="text-lg font-black font-mono text-brand-cyan">0 ₽</span>
+            </div>
+
+            <button type="button" id="order-submit-btn" onclick="sendOrderToBot()" class="w-full py-3.5 bg-gradient-to-r from-brand-cyan to-blue-600 text-black font-black rounded-xl text-xs hud-glow-cyan">ОФОРМИТЬ ЗАКАЗ</button>
+            <button type="button" onclick="hideCheckout()" class="w-full py-2 text-[11px] text-slate-500">Закрыть</button>
+        </div>
+    </div>
+
+<script>
+    const tg = window.Telegram?.WebApp;
+    try { tg.ready(); tg.expand(); } catch (e) {}
+
+    const MANAGER_USERNAME = "VIGODNOPTMANAGER";
+    const MANAGER_FALLBACK = "kaldin_den";
+    const MIX_OPT_FROM = 4;
+
+    const CHANNEL_LOGO = "https://i.postimg.cc/j27hZ6Dw/14.jpg";
+    const allProductsData = [
+        {
+            id: "sn_nike_initiator", cat: "Nike", title: "Nike Initiator",
+            desc: "Все пары в коробке, с фурнитурой. Качество LUX. Можно листать все фото модели.",
+            sizes: "фото модели • короб 8 пар",
+            retail: 0, opt: 0, luxDelta: 0, inquire: true, stock: 40,
+            images: [
+                "https://i.postimg.cc/Sn6gjSqv/photo-2026-09-21-15-35-58.jpg",
+                "https://i.postimg.cc/v4r0DYMS/photo-2026-09-21-15-35-58-%282%29.jpg",
+                "https://i.postimg.cc/753KbHDt/photo-2026-09-21-15-35-59.jpg",
+                "https://i.postimg.cc/qNs1gJ0j/photo-2026-09-21-15-36-00.jpg",
+                "https://i.postimg.cc/BjTmtS4J/photo-2026-09-21-15-36-01.jpg"
+            ],
+            badge: "INITIATOR"
+        },
+        {
+            id: "sn_gtx_new", cat: "Nike", title: "NEW MODEL GORTEX",
+            desc: "Новые модели на осень и весну. Качество LUX. Все пары в коробке, с фурнитурой. Цена пары — в ЛС.",
+            sizes: "41–45 • короб 8 пар",
+            retail: 0, opt: 0, luxDelta: 0, inquire: true, stock: 48,
+            images: [
+                "https://i.postimg.cc/2VpdWs0M/1.jpg",
+                "https://i.postimg.cc/Tp8jbztB/2.jpg",
+                "https://i.postimg.cc/svFPWkTt/3.jpg"
+            ],
+            badge: "NEW GTX"
+        },
+        {
+            id: "sn_top_sale_4145", cat: "Распродажа", title: "Топовая распродажа",
+            desc: "Распродажа. Качество LUX. Все пары в коробке, с фурнитурой, лучшего качества.",
+            sizes: "41–45 • короб 8 пар",
+            retail: 1600, opt: 950, luxDelta: 0, stock: 80,
+            images: [
+                "https://i.postimg.cc/WhPrzM3k/4.jpg",
+                "https://i.postimg.cc/ZCh3nrRy/5.jpg",
+                "https://i.postimg.cc/PPkZJmxD/6.jpg",
+                "https://i.postimg.cc/vcd9TWB9/7.jpg"
+            ],
+            badge: "SALE 950"
+        },
+        {
+            id: "sn_raf_simons", cat: "Raf Simons", title: "Raf Simons",
+            desc: "Распродажа. Качество LUX. Все пары в коробке, с фурнитурой, лучшего качества.",
+            sizes: "37–41 • короб 8 пар",
+            retail: 2000, opt: 1200, luxDelta: 0, stock: 32,
+            images: ["https://i.postimg.cc/TwHDg8w9/8.jpg"],
+            badge: "SALE 1200"
+        },
+        {
+            id: "sn_margiela", cat: "Maison Margiela", title: "Maison Margiela replica",
+            desc: "Повторное поступление. Качество LUX. Все пары в коробке, с фурнитурой. Идеально на осень и весну.",
+            sizes: "41–45 • короб 8 пар",
+            retail: 3500, opt: 2500, luxDelta: 200, stock: 24,
+            images: [
+                "https://i.postimg.cc/Mfz62KWP/9.jpg",
+                "https://i.postimg.cc/30385JKL/10.jpg",
+                "https://i.postimg.cc/64BWJ59M/11.jpg",
+                "https://i.postimg.cc/N2QsqfgS/12.jpg",
+                "https://i.postimg.cc/SYmSFNy1/13.jpg"
+            ],
+            badge: "LUX 2500–2700"
+        }
+    ];
+
+    let currentChannel = 'catalog';
+    let currentSubCat = 'all';
+    let currentPay = 'card';
+    let activeProduct = null;
+    let modalQty = 1;
+    let modalQuality = 'lux';
+    let modalPhoto = 0;
+    const cart = {};
+    const favorites = [];
+
+    function playClick() {
+        try { tg.HapticFeedback.impactOccurred('light'); } catch (e) {}
+    }
+
+    function showToast(text, icon) {
+        const el = document.getElementById('toast');
+        document.getElementById('toast-text').innerText = text;
+        document.getElementById('toast-icon').innerText = icon || '⚡️';
+        el.classList.remove('opacity-0', 'pointer-events-none');
+        setTimeout(() => el.classList.add('opacity-0', 'pointer-events-none'), 2200);
+    }
+
+    function redirectToManagerSupport() {
+        playClick();
+        const link = `https://t.me/${MANAGER_USERNAME}`;
+        if (tg?.openTelegramLink) tg.openTelegramLink(link);
+        else window.open(link, '_blank');
+    }
+
+    function cartPairs() {
+        return Object.values(cart).reduce((s, i) => s + i.qty, 0);
+    }
+
+    function isMixOpt(extraQty = 0) {
+        return (cartPairs() + extraQty) >= MIX_OPT_FROM;
+    }
+
+    function unitPrice(p, qtyInCartAll, quality) {
+        if (p.inquire) return 0;
+        const lux = quality === 'lux' ? (p.luxDelta || 0) : 0;
+        const base = qtyInCartAll >= MIX_OPT_FROM ? p.opt : p.retail;
+        return base + lux;
+    }
+
+    function priceLabel(p, kind) {
+        if (p.inquire) return 'лс';
+        const n = kind === 'retail' ? p.retail : p.opt;
+        return n.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function linePrice(item) {
+        const p = allProductsData.find(x => x.id === item.id);
+        if (!p) return 0;
+        return unitPrice(p, cartPairs(), item.quality) * item.qty;
+    }
+
+    function cartTotal() {
+        rebuildCartPrices();
+        return Object.values(cart).reduce((s, i) => s + i.unitPrice * i.qty, 0);
+    }
+
+    function rebuildCartPrices() {
+        const pairs = cartPairs();
+        for (const item of Object.values(cart)) {
+            const p = allProductsData.find(x => x.id === item.id);
+            if (!p) continue;
+            item.unitPrice = unitPrice(p, pairs, item.quality);
+        }
+    }
+
+    function switchChannel(ch) {
+        playClick();
+        currentChannel = ch;
+        currentSubCat = 'all';
+        const idle = 'flex-1 py-2.5 rounded-xl font-bold text-[11px] flex flex-col items-center gap-0.5 text-slate-400';
+        const on = 'flex-1 py-2.5 rounded-xl font-black text-[11px] flex flex-col items-center gap-0.5 shadow-lg text-black ';
+        document.getElementById('btn-tab-catalog').className = idle;
+        document.getElementById('btn-tab-retail').className = idle;
+        document.getElementById('btn-tab-boxes').className = idle;
+        const badge = document.getElementById('banner-badge');
+        const sub = document.getElementById('banner-subbadge');
+        const title = document.getElementById('banner-title');
+        const desc = document.getElementById('banner-desc');
+        const banner = document.getElementById('channel-info-banner');
+        if (ch === 'retail') {
+            document.getElementById('btn-tab-retail').className = on + 'bg-gradient-to-r from-emerald-400 to-teal-500';
+            badge.innerText = 'РОЗНИЦА 1–3 ПАРЫ';
+            badge.className = 'text-[9px] font-black uppercase tracking-widest bg-brand-emerald text-black px-2 py-0.5 rounded font-mono';
+            sub.innerText = 'до 3 пар — розничная цена';
+            title.innerText = 'Розница и мелкий опт';
+            desc.innerText = '1–3 пары по штучной цене. Четвёртая пара в заказе переводит всю корзину на сборный опт.';
+            banner.className = 'hud-card rounded-3xl p-4 border border-brand-emerald/40';
+        } else if (ch === 'boxes') {
+            document.getElementById('btn-tab-boxes').className = on + 'bg-gradient-to-r from-amber-400 to-orange-500';
+            badge.innerText = 'КОРОБ 8 ПАР';
+            badge.className = 'text-[9px] font-black uppercase tracking-widest bg-amber-400 text-black px-2 py-0.5 rounded font-mono';
+            sub.innerText = 'ростовка • уточнить цену';
+            title.innerText = 'Крупный опт — короба';
+            desc.innerText = 'Короб 8 пар одной модели (ростовка). Цену короба подтверждает менеджер.';
+            banner.className = 'hud-card rounded-3xl p-4 border border-amber-400/40';
+        } else {
+            document.getElementById('btn-tab-catalog').className = on + 'bg-gradient-to-r from-brand-cyan to-blue-600 hud-glow-cyan';
+            badge.innerText = 'КАТАЛОГ В-23';
+            badge.className = 'text-[9px] font-black uppercase tracking-widest bg-brand-cyan text-black px-2 py-0.5 rounded font-mono';
+            sub.innerText = 'от 4 пар — сборный опт';
+            title.innerText = 'Кроссовки оптом, ТЯК Москва';
+            desc.innerText = '1–3 пары — розница. От 4 пар любого микса — оптовая цена на всю корзину. Короб 8 пар — уточняйте у менеджера.';
+            banner.className = 'hud-card rounded-3xl p-4 tech-border-cyan';
+        }
+        renderPills();
+        filterProducts();
+    }
+
+    function renderPills() {
+        const cats = ['all', ...new Set(allProductsData.map(p => p.cat)), 'favorites'];
+        const box = document.getElementById('subcategories-pills');
+        box.innerHTML = cats.map(c => {
+            const label = c === 'all' ? 'Все модели' : (c === 'favorites' ? '❤️ Избранное' : c);
+            const on = currentSubCat === c;
+            return `<button onclick="setSubCategory('${c}')" class="px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap border ${on ? 'bg-brand-cyan text-black font-black border-brand-cyan' : 'hud-glass text-slate-400 border-white/10'}">${label}</button>`;
+        }).join('');
+    }
+
+    function setSubCategory(c) {
+        playClick();
+        currentSubCat = c;
+        renderPills();
+        filterProducts();
+    }
+
+    function filterProducts() {
+        const q = (document.getElementById('search').value || '').toLowerCase();
+        let list = allProductsData.slice();
+        if (currentSubCat === 'favorites') list = list.filter(p => favorites.includes(p.id));
+        else if (currentSubCat !== 'all') list = list.filter(p => p.cat === currentSubCat);
+        if (q) list = list.filter(p => (p.title + p.cat + p.desc + p.sizes).toLowerCase().includes(q));
+        renderProducts(list);
+    }
+
+    function renderProducts(items) {
+        const box = document.getElementById('products-container');
+        if (!items.length) {
+            box.innerHTML = '<div class="col-span-2 text-center py-12 text-slate-500 font-mono text-xs">Модели не найдены</div>';
+            return;
+        }
+        const retailView = currentChannel === 'retail';
+        const boxesView = currentChannel === 'boxes';
+        box.innerHTML = items.map((p, idx) => {
+            const inCart = cart[p.id]?.qty || 0;
+            const fav = favorites.includes(p.id);
+            const cover = (p.images && p.images[0]) ? p.images[0] : CHANNEL_LOGO;
+            const photoN = (p.images && p.images.length > 1) ? p.images.length : 0;
+            const primary = retailView ? priceLabel(p, 'retail') : priceLabel(p, 'opt');
+            const secondary = retailView ? priceLabel(p, 'opt') : priceLabel(p, 'retail');
+            return `
+            <div class="hud-card sneaker-card rounded-3xl flex flex-col card-in" style="animation-delay:${idx * 60}ms">
+                <div class="relative">
+                    <button onclick="toggleFavorite('${p.id}', event)" class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-xl hud-glass text-sm border border-white/15">${fav ? '❤️' : '🤍'}</button>
+                    <div onclick="openProduct('${p.id}')" class="cursor-pointer">
+                        <div class="relative aspect-square bg-slate-900 overflow-hidden">
+                            <img src="${cover}" alt="${p.title}" class="w-full h-full object-cover transition duration-500 hover:scale-110" loading="lazy">
+                            <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <span class="absolute top-2.5 left-2.5 ${boxesView ? 'bg-amber-400' : (retailView ? 'bg-brand-emerald' : 'bg-gradient-to-r from-brand-cyan to-blue-500')} text-black font-black text-[9px] px-2 py-0.5 rounded-md font-mono shadow-lg">${p.badge || (boxesView ? 'КОРОБ' : 'ОПТ')}</span>
+                            ${photoN ? `<span class="absolute bottom-2 right-2 hud-glass text-[9px] font-mono text-white px-1.5 py-0.5 rounded-md border border-white/20">🖼 ${photoN}</span>` : ''}
+                        </div>
+                        <div class="p-3 pb-1">
+                            <div class="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
+                                <span class="uppercase tracking-wider">${p.cat}</span>
+                                <span class="text-brand-emerald font-bold">${p.stock} пар</span>
+                            </div>
+                            <h3 class="font-black text-xs text-white leading-snug line-clamp-2">${p.title}</h3>
+                            <p class="text-[10px] font-mono text-slate-500 mt-1">${p.sizes}</p>
+                            <div class="mt-2 rounded-xl p-2 border border-white/10 bg-black/30">
+                                <div class="flex items-baseline gap-1.5 font-mono">
+                                    <span class="font-black price-neon ${retailView ? 'text-brand-emerald' : 'text-brand-cyan'} text-base">${primary}</span>
+                                </div>
+                                <p class="text-[9px] font-mono text-slate-400 mt-0.5">${p.inquire ? 'цена в ЛС' : (retailView ? 'опт ' + secondary : 'розн. ' + secondary)} • ${boxesView ? 'короб 8' : (retailView ? '1–3 пары' : 'от 4 пар опт')}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 pt-2 mt-auto">
+                    ${boxesView
+                        ? `<button onclick="openProduct('${p.id}')" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 text-black rounded-xl text-xs font-black shadow-lg">КОРОБ 8 ПАР</button>`
+                        : (inCart
+                            ? `<div class="flex items-center justify-between hud-glass border border-brand-cyan/50 rounded-xl p-1">
+                                <button onclick="updateCart('${p.id}', ${inCart - 1})" class="w-8 h-8 font-black text-brand-cyan">−</button>
+                                <span class="text-xs font-mono font-bold">${inCart} пар</span>
+                                <button onclick="updateCart('${p.id}', ${inCart + 1})" class="w-8 h-8 font-black text-brand-cyan">+</button>
+                               </div>`
+                            : `<button onclick="updateCart('${p.id}', 1)" class="w-full py-2.5 bg-gradient-to-r from-brand-cyan via-sky-400 to-blue-600 text-black rounded-xl text-xs font-black shadow-lg">В ЗАКАЗ</button>`)}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function toggleFavorite(id, ev) {
+        ev?.stopPropagation();
+        playClick();
+        const i = favorites.indexOf(id);
+        if (i >= 0) favorites.splice(i, 1);
+        else favorites.push(id);
+        filterProducts();
+    }
+
+    function updateCart(id, qty, quality) {
+        playClick();
+        const p = allProductsData.find(x => x.id === id);
+        if (!p) return;
+        if (qty <= 0) delete cart[id];
+        else {
+            const q = quality || cart[id]?.quality || 'std';
+            cart[id] = { id, qty, quality: q, unitPrice: 0 };
+        }
+        rebuildCartPrices();
+        if (cartPairs() >= MIX_OPT_FROM) showToast('Сборный опт активен', '📦');
+        renderCartBar();
+        filterProducts();
+        if (activeProduct?.id === id) refreshModalPrices();
+    }
+
+    function renderCartBar() {
+        const bar = document.getElementById('cart-bar');
+        const pairs = cartPairs();
+        if (!pairs) {
+            bar.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            return;
+        }
+        bar.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        const mode = pairs >= MIX_OPT_FROM ? 'сборный опт' : 'розница';
+        document.getElementById('cart-bar-meta').innerText = `${pairs} пар • ${mode}`;
+        document.getElementById('cart-bar-total').innerText = cartTotal().toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function openProduct(id) {
+        playClick();
+        activeProduct = allProductsData.find(p => p.id === id);
+        if (!activeProduct) return;
+        modalQty = cart[id]?.qty || 1;
+        modalQuality = cart[id]?.quality || 'lux';
+        modalPhoto = 0;
+        setModalPhoto(0);
+        document.getElementById('modal-title').innerText = activeProduct.title;
+        document.getElementById('modal-cat').innerText = activeProduct.cat;
+        document.getElementById('modal-desc').innerText = activeProduct.desc;
+        document.getElementById('modal-sizes').innerText = activeProduct.sizes;
+        document.getElementById('modal-badge').innerText = activeProduct.badge || 'ОПТ';
+        document.getElementById('qty-slider').value = modalQty;
+        document.getElementById('product-form').classList.remove('opacity-0', 'pointer-events-none');
+        const sheet = document.getElementById('product-sheet');
+        sheet.classList.remove('translate-y-full');
+        sheet.style.transform = 'translateY(0)';
+        setQuality(modalQuality);
+    }
+
+    function hideProduct() {
+        document.getElementById('product-sheet').style.transform = 'translateY(100%)';
+        document.getElementById('product-form').classList.add('opacity-0', 'pointer-events-none');
+        activeProduct = null;
+    }
+
+    function setQuality(q) {
+        modalQuality = q;
+        const std = document.getElementById('q-std');
+        const lux = document.getElementById('q-lux');
+        if (q === 'lux') {
+            lux.className = 'rounded-xl py-2.5 text-xs font-black border border-amber-400 bg-amber-400 text-black';
+            std.className = 'rounded-xl py-2.5 text-xs font-black border border-white/10 text-slate-300';
+        } else {
+            std.className = 'rounded-xl py-2.5 text-xs font-black border border-brand-cyan bg-brand-cyan text-black';
+            lux.className = 'rounded-xl py-2.5 text-xs font-black border border-white/10 text-slate-300';
+        }
+        refreshModalPrices();
+    }
+
+    function onQtySlide(v) {
+        modalQty = Number(v);
+        refreshModalPrices();
+    }
+
+    function refreshModalPrices() {
+        if (!activeProduct) return;
+        const p = activeProduct;
+        const projected = cartPairs() - (cart[p.id]?.qty || 0) + modalQty;
+        const mix = projected >= MIX_OPT_FROM;
+        const price = unitPrice(p, projected, modalQuality);
+        document.getElementById('tier-qty').innerText = modalQty;
+        document.getElementById('tier-unit-price').innerText = p.inquire ? 'лс' : (price.toLocaleString('ru-RU') + ' ₽');
+        document.getElementById('tier-total-line').innerText = p.inquire
+            ? 'Цену пары и короба уточните у менеджера'
+            : `Итого: ${(price * modalQty).toLocaleString('ru-RU')} ₽`;
+        document.getElementById('quality-hint').innerText = p.inquire
+            ? 'Стоимость пары — в ЛС'
+            : (modalQuality === 'lux'
+                ? `Люкс ${p.luxDelta ? '+' + p.luxDelta + ' ₽' : 'как в посте'}`
+                : `Стандарт: розница ${p.retail.toLocaleString('ru-RU')} ₽ • опт ${p.opt.toLocaleString('ru-RU')} ₽`);
+        document.getElementById('mix-opt-banner').classList.toggle('hidden', !mix);
+        document.getElementById('slider-title-label').innerText = mix ? 'Количество • сборный опт' : 'Количество пар';
+    }
+
+    function addModalToCart() {
+        if (!activeProduct) return;
+        updateCart(activeProduct.id, modalQty, modalQuality);
+        hideProduct();
+        showToast('Добавлено в заказ', '✅');
+    }
+
+    function askBoxPrice() {
+        if (!activeProduct) return;
+        playClick();
+        const text = `Здравствуйте! Интересует оптовая цена на короб 8 пар ${activeProduct.title}`;
+        const url = `https://t.me/${MANAGER_USERNAME}?text=${encodeURIComponent(text)}`;
+        try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (e) {}
+        if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/${MANAGER_USERNAME}`);
+        else window.open(`https://t.me/${MANAGER_USERNAME}`, '_blank');
+        showToast('Текст запроса скопирован. Напишите менеджеру', '📦');
+    }
+
+    function setPay(mode) {
+        currentPay = mode;
+        document.getElementById('pay-card').className = mode === 'card'
+            ? 'rounded-xl py-3 text-[11px] font-black bg-brand-cyan text-black'
+            : 'rounded-xl py-3 text-[11px] font-black hud-glass text-slate-300';
+        document.getElementById('pay-cash').className = mode === 'cash'
+            ? 'rounded-xl py-3 text-[11px] font-black bg-brand-cyan text-black'
+            : 'rounded-xl py-3 text-[11px] font-black hud-glass text-slate-300';
+    }
+
+    function showCheckout() {
+        playClick();
+        rebuildCartPrices();
+        const box = document.getElementById('checkout-cart-items');
+        box.innerHTML = Object.values(cart).map(item => {
+            const p = allProductsData.find(x => x.id === item.id);
+            if (!p) return '';
+            const tag = item.quality === 'lux' ? 'LUX' : 'STD';
+            return `<div class="flex justify-between items-center hud-glass rounded-xl p-2.5 text-xs">
+                <div>
+                    <p class="font-bold text-white">${p.title} <span class="text-[9px] font-mono text-amber-300">${tag}</span></p>
+                    <p class="text-[10px] font-mono text-slate-400">${item.qty} пар × ${item.unitPrice} ₽</p>
+                </div>
+                <span class="font-mono font-black text-brand-cyan">${(item.qty * item.unitPrice).toLocaleString('ru-RU')} ₽</span>
+            </div>`;
+        }).join('');
+        document.getElementById('checkout-total').innerText = cartTotal().toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('checkout-form').classList.remove('opacity-0', 'pointer-events-none');
+        const sheet = document.getElementById('checkout-sheet');
+        sheet.classList.remove('translate-y-full');
+        sheet.style.transform = 'translateY(0)';
+    }
+
+    function hideCheckout() {
+        document.getElementById('checkout-sheet').style.transform = 'translateY(100%)';
+        document.getElementById('checkout-form').classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function sendOrderToBot() {
+        const company = document.getElementById('company').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const contacts = document.getElementById('contacts').value.trim();
+        const tk = document.getElementById('tk-choice').value;
+        if (!company || !city || !contacts) {
+            showToast('Заполните имя, город и контакт', '⚠️');
+            return;
+        }
+        if (!Object.keys(cart).length) {
+            showToast('Корзина пустая', '⚠️');
+            return;
+        }
+        rebuildCartPrices();
+        const items = Object.values(cart).map(item => {
+            const p = allProductsData.find(x => x.id === item.id);
+            return {
+                id: item.id,
+                title: p ? p.title : item.id,
+                qty: item.qty,
+                quality: item.quality,
+                price: item.unitPrice,
+                total: item.unitPrice * item.qty
+            };
+        });
+        const payload = {
+            type: 'order',
+            brand: 'ВЫГОДНО ОПТОМ',
+            pay_method: currentPay,
+            price_mode: cartPairs() >= MIX_OPT_FROM ? 'wholesale_mix' : 'retail',
+            cart: items,
+            total_sum: cartTotal(),
+            company: `${company} (${tk})`,
+            city,
+            contacts
+        };
+        const raw = JSON.stringify(payload);
+        try {
+            if (tg && typeof tg.sendData === 'function' && raw.length < 3900) {
+                tg.sendData(raw);
+                showToast('Заявка отправлена', '✅');
+                return;
+            }
+        } catch (e) {}
+        const text = [
+            'SNEAKER_ORDER',
+            `PAY:${currentPay === 'card' ? 'Карта Сбер/Т-Банк' : 'Наличные'}`,
+            `MODE:${payload.price_mode}`,
+            `SUM:${payload.total_sum}`,
+            `NAME:${payload.company}`,
+            `CITY:${city}`,
+            `CONTACTS:${contacts}`,
+            ...items.map(it => `ITEM:${it.title}|${it.quality}|${it.qty}|${it.total}`)
+        ].join('\n');
+        try { navigator.clipboard.writeText(text); } catch (e) {}
+        const msg = encodeURIComponent(text);
+        if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/${MANAGER_USERNAME}`);
+        showToast('Заявка скопирована. Отправьте менеджеру @' + MANAGER_USERNAME, '✅');
+    }
+
+    function productPhotos() {
+        return (activeProduct && activeProduct.images && activeProduct.images.length)
+            ? activeProduct.images
+            : [CHANNEL_LOGO];
+    }
+
+    function setModalPhoto(i) {
+        const imgs = productPhotos();
+        modalPhoto = ((i % imgs.length) + imgs.length) % imgs.length;
+        document.getElementById('modal-main-img').src = imgs[modalPhoto];
+        document.getElementById('modal-photo-count').innerText = `${modalPhoto + 1}/${imgs.length}`;
+        const thumbs = document.getElementById('modal-thumbs');
+        thumbs.innerHTML = imgs.map((src, idx) =>
+            `<button type="button" onclick="setModalPhoto(${idx})" class="shrink-0 w-14 h-14 rounded-xl overflow-hidden border ${idx === modalPhoto ? 'border-brand-cyan' : 'border-white/10'}">
+                <img src="${src}" class="w-full h-full object-cover" alt="">
+            </button>`
+        ).join('');
+    }
+
+    function shiftModalPhoto(dir) {
+        setModalPhoto(modalPhoto + dir);
+    }
+
+    function openLightbox() {
+        const src = document.getElementById('modal-main-img').src;
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox-modal').classList.remove('opacity-0', 'pointer-events-none');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox-modal').classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    renderPills();
+    filterProducts();
+</script>
+</body>
+</html>
