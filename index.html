@@ -762,14 +762,6 @@
             city,
             contacts
         };
-        const raw = JSON.stringify(payload);
-        try {
-            if (tg && typeof tg.sendData === 'function' && raw.length < 3900) {
-                tg.sendData(raw);
-                showToast('Заявка отправлена', '✅');
-                return;
-            }
-        } catch (e) {}
         const text = [
             'SNEAKER_ORDER',
             `PAY:${currentPay === 'card' ? 'Карта Сбер/Т-Банк' : 'Наличные'}`,
@@ -780,10 +772,21 @@
             `CONTACTS:${contacts}`,
             ...items.map(it => `ITEM:${it.title}|${it.quality}|${it.qty}|${it.total}`)
         ].join('\n');
+        const raw = JSON.stringify(payload);
+        const platform = String(tg?.platform || '').toLowerCase();
+        const canSendData = !!(tg && typeof tg.sendData === 'function' && raw.length < 3900);
+        try {
+            if (canSendData) {
+                tg.sendData(raw);
+                showToast('Заявка отправлена', '✅');
+                setTimeout(() => { try { tg.close(); } catch (e) {} }, 250);
+                return;
+            }
+        } catch (e) {}
         try { navigator.clipboard.writeText(text); } catch (e) {}
-        const msg = encodeURIComponent(text);
-        if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/${MANAGER_USERNAME}`);
-        showToast('Заявка скопирована. Отправьте менеджеру @' + MANAGER_USERNAME, '✅');
+        showToast('На компьютере отправьте скопированный текст в чат бота', '📋');
+        const botUser = 'vigodnoopt_b23_bot';
+        if (tg?.openTelegramLink) tg.openTelegramLink('https://t.me/' + botUser);
     }
 
     function productPhotos() {
